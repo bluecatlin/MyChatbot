@@ -44,12 +44,41 @@
 				)
 			);
         		break;
+		 case "location":
+			$line_server_url = 'https://api.line.me/v2/bot/message/reply';
+        		$response = array (
+				"replyToken" => $sender_replyToken,
+				"messages" => array (
+					array (
+						"type" => "location",
+						"title" => "my location",
+						"address" => "〒150-0002 東京都渋谷区渋谷２丁目２１−１",
+            					"latitude" => 35.65910807942215,
+						"longitude" => 139.70372892916203
+					)
+				)
+			);
+        		break;
+		case "sticker":
+			$line_server_url = 'https://api.line.me/v2/bot/message/reply';
+        		$response = array (
+				"replyToken" => $sender_replyToken,
+				"messages" => array (
+					array (
+						"type" => "sticker",
+						"packageId" => "1",
+						"stickerId" => "1"
+					)
+				)
+			);
+        		break;
  }
  $myfile = fopen("log.txt","w+") or die("Unable to open file!"); //設定一個log.txt 用來印訊息
  fwrite($myfile, "\xEF\xBB\xBF".json_encode($response)); //在字串前加入\xEF\xBB\xBF轉成utf8格式
  fclose($myfile);
  //回傳給line server
  $header[] = "Content-Type: application/json";
+ // 請將以下字串內容從 Bearer 後面的 Erreh... 置換成你自己的Channel Access Token(LINE Developer/Channel settings/Messaging settings/Channel access token (long-lived))
  $header[] = "Authorization: Bearer ErrehF4NSPnq/XcPl8PSaAUczszYK2oQHWJt9FRrB+xVBC1fe8IdgNhBarExBhV1e80d4aQxytXLwEGuzx+Bb88MhInuckexJLRmNHTiv3e7MiXbHnWeu4HQEX3qNSYYbQiyoQND53tY+HSuHMnLPAdB04t89/1O/w1cDnyilFU=";
  $ch = curl_init($line_server_url);                                                                      
  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
