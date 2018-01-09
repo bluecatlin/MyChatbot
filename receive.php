@@ -10,102 +10,21 @@ $myfile = fopen("log.txt","w+") or die("Unable to open file!"); //設定一個lo
  $sender_replyToken = $json_obj->events[0]->replyToken;
  $line_server_url = 'https://api.line.me/v2/bot/message/push';
  //用sender_txt來分辨要發何種訊息
- switch ($sender_txt) {
-    		case "push":
-        		$response = array (
-				"to" => $sender_userid,
-				"messages" => array (
-					array (
-						"type" => "text",
-						"text" => "Hello, YOU SAY ".$sender_txt
-					)
-				)
-			);
-        		break;
-    		case "reply":
-			$line_server_url = 'https://api.line.me/v2/bot/message/reply';
-        		$response = array (
-				"replyToken" => $sender_replyToken,
-				"messages" => array (
-					array (
-						"type" => "text",
-						"text" => "Hello, YOU SAY ".$sender_txt
-					)
-				)
-			);
-        		break;
-		case "image":
-			$line_server_url = 'https://api.line.me/v2/bot/message/reply';
-        		$response = array (
-				"replyToken" => $sender_replyToken,
-				"messages" => array (
-					array (
-						"type" => "image",
-						"originalContentUrl" => "https://www.w3schools.com/css/paris.jpg",
-						"previewImageUrl" => "https://www.nasa.gov/sites/default/themes/NASAPortal/images/feed.png"
-					)
-				)
-			);
-        		break;
-		 case "location":
-			$line_server_url = 'https://api.line.me/v2/bot/message/reply';
-        		$response = array (
-				"replyToken" => $sender_replyToken,
-				"messages" => array (
-					array (
-						"type" => "location",
-						"title" => "my location",
-						"address" => "〒150-0002 東京都渋谷区渋谷２丁目２１−１",
-            					"latitude" => 35.65910807942215,
-						"longitude" => 139.70372892916203
-					)
-				)
-			);
-        		break;
-		case "sticker":
-			$line_server_url = 'https://api.line.me/v2/bot/message/reply';
-        		$response = array (
-				"replyToken" => $sender_replyToken,
-				"messages" => array (
-					array (
-						"type" => "sticker",
-						"packageId" => "1",
-						"stickerId" => "1"
-					)
-				)
-			);
-        		break;
-		 case "button":
-			$line_server_url = 'https://api.line.me/v2/bot/message/reply';
-        		$response = array (
-				"replyToken" => $sender_replyToken,
-				"messages" => array (
-					array (
-						"type" => "template",
-						"altText" => "this is a buttons template",
-						"template" => array (
-							"type" => "buttons",
-							"thumbnailImageUrl" => "https://www.w3schools.com/css/paris.jpg",
-							"title" => "Menu",
-							"text" => "Please select",
-							"actions" => array (
-								array (
-									"type" => "postback",
-									"label" => "Buy",
-									"data" => "action=buy&itemid=123"
-								),
-								array (
-									"type" => "postback",
-                   							"label" => "Add to cart",
-                    							"data" => "action=add&itemid=123"
-								)
-							)
-						)
-					)
-				)
-			);
-        		break;
- }
+ // 請將Authorization:字串內容從 Bearer 後面的 Erreh... 置換成你自己的Channel Access Token(LINE Developer/Channel settings/Messaging settings/Channel access token (long-lived))
+ 
+ $objID = $json_obj->events[0]->message->id;
+			$url = 'https://api.line.me/v2/bot/message/'.$objID.'/content';
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				'Authorization: Bearer ErrehF4NSPnq/XcPl8PSaAUczszYK2oQHWJt9FRrB+xVBC1fe8IdgNhBarExBhV1e80d4aQxytXLwEGuzx+Bb88MhInuckexJLRmNHTiv3e7MiXbHnWeu4HQEX3qNSYYbQiyoQND53tY+HSuHMnLPAdB04t89/1O/w1cDnyilFU=',
+			));
+				
+			$json_content = curl_exec($ch);
+			curl_close($ch);
+$imagefile = fopen($objID.".jpeg", "w+") or die("Unable to open file!"); //設定一個log.txt，用來印訊息
+			fwrite($imagefile, $json_content); 
+			fclose($imagefile);
  //回傳給line server
  $header[] = "Content-Type: application/json";
  // 請將以下字串內容從 Bearer 後面的 Erreh... 置換成你自己的Channel Access Token(LINE Developer/Channel settings/Messaging settings/Channel access token (long-lived))
